@@ -244,7 +244,12 @@ var DRONES=[
  {id:'drag',name:'Drag 6S',info:'Ракета. Дуже швидка, важка у керуванні.',twr:11,drag:0.014,lin:0.08,lag:0.02,rate:0.9,batt:2.0,crashV:6,tilt:40,arm:0.12,prop:0.063,duct:false,color:'#ff3b5c',scale:1.05,snd:1.35,st:[5,3,1,1]},
  {id:'cine',name:'Cinewhoop 3″',info:'Захищені гвинти, плавний політ.',twr:3.4,drag:0.020,lin:0.22,lag:0.05,rate:0.7,batt:0.8,crashV:12,tilt:12,arm:0.105,prop:0.055,duct:true,color:'#62f0a0',scale:1.05,snd:0.8,st:[2,2,5,3]},
  {id:'whoop',name:'Tiny Whoop',info:'Маленький і стійкий до ударів.',twr:2.7,drag:0.030,lin:0.35,lag:0.06,rate:0.55,batt:1.6,crashV:16,tilt:15,arm:0.075,prop:0.03,duct:true,color:'#ffd23a',scale:0.6,snd:0.7,st:[1,3,4,1]},
- {id:'lr',name:'Long Range 7″',info:'Повільний, але летить довго.',twr:3.8,drag:0.0065,lin:0.07,lag:0.07,rate:0.6,batt:0.45,crashV:7,tilt:20,arm:0.15,prop:0.09,duct:false,color:'#b48cff',scale:1.25,snd:0.65,st:[4,1,4,5]}
+ {id:'lr',name:'Long Range 7″',info:'Повільний, але летить довго.',twr:3.8,drag:0.0065,lin:0.07,lag:0.07,rate:0.6,batt:0.45,crashV:7,tilt:20,arm:0.15,prop:0.09,duct:false,color:'#b48cff',scale:1.25,snd:0.65,st:[4,1,4,5]},
+ {id:'lr10',model:'lr10',name:'Long Range 10″',info:'Великий дальник із синім акумулятором.',twr:3.3,drag:0.0058,lin:0.07,lag:0.08,rate:0.55,batt:0.4,crashV:7,tilt:18,arm:0.19,prop:0.125,duct:false,color:'#2d7cff',scale:1.4,snd:0.6,st:[4,1,4,5]},
+ {id:'photo',model:'photo',name:'Фото-квадро',info:'Підвіс із камерою й посадкові лижі. Плавний.',twr:2.6,drag:0.022,lin:0.2,lag:0.06,rate:0.6,batt:0.7,crashV:10,tilt:12,arm:0.12,prop:0.075,duct:false,color:'#ff4a3a',scale:1.3,snd:0.7,st:[2,2,5,4]},
+ {id:'strike',model:'strike',name:'FPV-ударний',info:'Із боєголовкою: більший радіус підриву.',twr:4.6,drag:0.012,lin:0.11,lag:0.04,rate:0.95,batt:0.9,crashV:6,tilt:28,arm:0.13,prop:0.075,duct:false,color:'#6f8a3a',scale:1.2,snd:1.0,blast:1.4,st:[4,3,2,2]},
+ {id:'mini',model:'mini',name:'Folding Mini',info:'Білий складний. Легкий і слухняний.',twr:3.6,drag:0.017,lin:0.17,lag:0.05,rate:0.75,batt:0.85,crashV:9,tilt:20,arm:0.09,prop:0.06,duct:false,color:'#ff9a2a',scale:0.85,snd:0.8,st:[3,3,4,3]},
+ {id:'duct',model:'duct',name:'Duct Pro 3.5″',info:'Захищені гвинти й камера спереду.',twr:3.8,drag:0.019,lin:0.2,lag:0.045,rate:0.8,batt:0.75,crashV:14,tilt:16,arm:0.11,prop:0.062,duct:true,color:'#e8edf2',scale:1.05,snd:0.85,st:[3,3,5,3]}
 ];
 function D(){for(var i=0;i<DRONES.length;i++)if(DRONES[i].id===S.drone)return DRONES[i];return DRONES[1]}
 
@@ -623,15 +628,16 @@ function detonate(auto){
   if(!started||paused||st.crashed||war.over)return;
   if(st.landed&&!auto){toast('Спочатку злети','bad');return}
   var p=st.p,n=0,sh=0,i,v,d,dx,dy,dz;
-  blast(p.x,p.y,p.z,19,true);
+  var DR=DET_R*(D().blast||1);
+  blast(p.x,p.y,p.z,19*(D().blast||1),true);
   for(i=0;i<wveh.length;i++){
     v=wveh[i];if(!v.alive)continue;
     dx=v.g.position.x-p.x;dy=v.g.position.y+1.5-p.y;dz=v.g.position.z-p.z;d=Math.sqrt(dx*dx+dy*dy+dz*dz);
-    if(d<DET_R+v.r){markDead(v.id);destroyVeh(v,true);boomQ.push({t:0.06+d*0.012,x:v.g.position.x,y:v.g.position.y+1.5,z:v.g.position.z,k:v.type==='tank'?10:8});n++}
+    if(d<DR+v.r){markDead(v.id);destroyVeh(v,true);boomQ.push({t:0.06+d*0.012,x:v.g.position.x,y:v.g.position.y+1.5,z:v.g.position.z,k:v.type==='tank'?10:8});n++}
   }
   for(var k in shMesh){
     var m=shMesh[k];dx=m.position.x-p.x;dy=m.position.y-p.y;dz=m.position.z-p.z;
-    if(dx*dx+dy*dy+dz*dz<DET_R*DET_R*1.6){markDead('s'+k);sh++}
+    if(dx*dx+dy*dy+dz*dz<DR*DR*1.6){markDead('s'+k);sh++}
   }
   if(!coop()&&sh)war.lives=Math.min(MAX_LIVES,war.lives+sh);
   var left=0;wveh.forEach(function(w){if(w.alive&&w.type!=='aa')left++});
@@ -890,6 +896,44 @@ function buildDrone(df){
     pr.rotation.x=-Math.PI/2;pr.position.set(s[0]*df.arm,0.028,s[1]*df.arm);drone.add(pr);props.push(pr);
     if(df.duct){var du=new THREE.Mesh(new THREE.TorusGeometry(df.prop+0.006,0.007,6,20),mAcc);du.rotation.x=Math.PI/2;du.position.copy(pr.position);drone.add(du)}
   });
+  var LM=function(c){return new THREE.MeshLambertMaterial({color:c})};
+  var add=function(g,m,x,y,z,rx,ry,rz){var o=new THREE.Mesh(g,m);o.position.set(x,y,z);if(rx)o.rotation.x=rx;if(ry)o.rotation.y=ry;if(rz)o.rotation.z=rz;drone.add(o);return o};
+  if(df.model==='lr10'){
+    bat.visible=false;
+    add(new THREE.BoxGeometry(0.055,0.04,0.2),LM(0x2d7cff),0,0.045,0.02);
+    add(new THREE.BoxGeometry(0.058,0.008,0.02),LM(0x111418),0,0.045,-0.03);
+    add(new THREE.BoxGeometry(0.058,0.008,0.02),LM(0x111418),0,0.045,0.08);
+    add(new THREE.CylinderGeometry(0.004,0.004,0.07,5),LM(0x111418),0,0.03,0.12,0.5);
+  }else if(df.model==='photo'){
+    body.visible=false;bat.visible=false;mBody.color.set(0x161b23);
+    var dm=add(new THREE.SphereGeometry(0.075,14,10),mBody,0,0.015,0);dm.scale.set(1,0.55,1.25);
+    add(new THREE.SphereGeometry(0.032,12,10),LM(0x0c0d10),0,-0.04,-0.055);
+    add(new THREE.CylinderGeometry(0.014,0.014,0.02,10),LM(0x1c2c40),0,-0.04,-0.085,Math.PI/2);
+    [[1,1],[-1,1],[1,-1],[-1,-1]].forEach(function(s){
+      add(new THREE.BoxGeometry(0.01,0.1,0.01),mArm,s[0]*0.07,-0.05,s[1]*0.05,0,0,-s[0]*0.35);
+      add(new THREE.SphereGeometry(0.009,6,5),new THREE.MeshBasicMaterial({color:s[1]>0?0xff2a2a:0x3aff7a}),s[0]*df.arm,0.0,s[1]*df.arm);
+    });
+    add(new THREE.BoxGeometry(0.012,0.01,0.2),mArm,0.1,-0.1,0);add(new THREE.BoxGeometry(0.012,0.01,0.2),mArm,-0.1,-0.1,0);
+  }else if(df.model==='strike'){
+    bat.visible=false;
+    var gm=LM(0x4d5a34);
+    add(new THREE.CylinderGeometry(0.032,0.032,0.22,12),gm,0,0.06,0.0,Math.PI/2);
+    add(new THREE.ConeGeometry(0.032,0.06,12),gm,0,0.06,-0.14,-Math.PI/2);
+    add(new THREE.BoxGeometry(0.07,0.01,0.02),LM(0x0e0f10),0,0.06,-0.03);
+    add(new THREE.BoxGeometry(0.07,0.01,0.02),LM(0x0e0f10),0,0.06,0.05);
+    add(new THREE.CylinderGeometry(0.05,0.05,0.014,16),LM(0x3a4528),0,-0.035,0.02);
+    add(new THREE.BoxGeometry(0.025,0.02,0.012),new THREE.MeshBasicMaterial({color:0xffc83a}),0.07,0.015,0.04);
+  }else if(df.model==='mini'){
+    mBody.color.set(0xe4e8ed);mArm.color.set(0xb4bac2);
+    body.scale.set(0.8,1.1,1.1);bat.visible=false;
+    add(new THREE.BoxGeometry(0.05,0.03,0.07),LM(0xf1f3f6),0,0.03,-0.03);
+    add(new THREE.SphereGeometry(0.02,10,8),LM(0x0c0d10),0,-0.005,-0.09);
+  }else if(df.model==='duct'){
+    mBody.color.set(0xdfe3e8);mArm.color.set(0xaab0b8);bat.visible=false;
+    add(new THREE.BoxGeometry(0.08,0.035,0.12),LM(0xf1f3f6),0,0.03,0);
+    add(new THREE.CylinderGeometry(0.025,0.025,0.04,12),LM(0x0c0d10),0,0.0,-0.1,Math.PI/2);
+    add(new THREE.BoxGeometry(0.035,0.02,0.002),new THREE.MeshBasicMaterial({color:0x2a2f38}),0,0.05,-0.02);
+  }
   drone.scale.setScalar(2.4*df.scale);
 }
 scene.add(drone);buildDrone(D());
@@ -1630,7 +1674,7 @@ function drawIcon(c,d){
     x.beginPath();x.arc(s[0]*a,s[1]*a,pr,0,7);x.fillStyle='rgba(170,180,192,.18)';x.fill();
     x.lineWidth=d.duct?Math.max(3,h*0.06):1.5;x.strokeStyle=d.duct?d.color:'rgba(255,255,255,.4)';x.stroke();
   });
-  x.fillStyle=d.color;x.fillRect(-h*0.07*d.scale,-h*0.12*d.scale,h*0.14*d.scale,h*0.24*d.scale);
+  var bl=(d.model==='strike'||d.model==='lr10')?0.36:0.24;x.fillStyle=d.color;x.fillRect(-h*0.07*d.scale,-h*bl/2*d.scale,h*0.14*d.scale,h*bl*d.scale);
 }
 function renderGarage(el){
   el.innerHTML=DRONES.map(function(d){return '<button type="button" class="dcard'+(d.id===S.drone?' on':'')+'" data-id="'+d.id+'"><canvas width="250" height="100"></canvas><b>'+d.name+'</b><small>'+d.info+'</small><div class="st">'+statBars(d.st)+'</div></button>'}).join('');
