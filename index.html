@@ -266,10 +266,20 @@ var DRONES=[
  {id:'duct',model:'duct',name:'Duct Pro 3.5″',info:'Захищені гвинти й камера спереду.',twr:3.8,drag:0.019,lin:0.2,lag:0.045,rate:0.8,batt:0.75,crashV:14,tilt:16,arm:0.11,prop:0.062,duct:true,color:'#e8edf2',scale:1.05,snd:0.85,st:[3,3,5,3]}
 ];
 var PRICE={free:0,whoop:0,cine:500,race:700,lr:800,mini:900,photo:1000,duct:1200,drag:1500,lr10:1800,strike:2500};
+var PROPS=[
+ {id:'std',name:'Стандартні',color:'#aab4c0',price:0,twr:1,batt:1,crash:1,txt:'Базові гвинти'},
+ {id:'orange',name:'Помаранчеві «Атака»',color:'#ff8a1e',price:200,twr:1.05,batt:1.04,crash:1,txt:'+5% тяги, +4% витрати'},
+ {id:'teal',name:'Бірюзові «Баланс»',color:'#2fd0b5',price:200,twr:1.03,batt:0.97,crash:1,txt:'+3% тяги, −3% витрати'},
+ {id:'pink',name:'Рожеві «Тихі»',color:'#ff4f86',price:200,twr:1,batt:1,crash:1.1,txt:'+10% міцності'},
+ {id:'carbon',name:'Карбон 10″',color:'#22262c',price:350,twr:1.02,batt:0.93,crash:1.05,txt:'+2% тяги, −7% витрати, +5% міцності'},
+ {id:'yellow',name:'Жовті «Тяга»',color:'#e6f23a',price:250,twr:1.09,batt:1.08,crash:1,txt:'+9% тяги, +8% витрати'}
+];
+function propOf(id){for(var i=0;i<PROPS.length;i++)if(PROPS[i].id===id)return PROPS[i];return PROPS[0]}
+var BLADE_G=(function(){var s=new THREE.Shape();s.moveTo(-0.07,0.04);s.bezierCurveTo(-0.2,0.25,-0.17,0.7,-0.05,1.0);s.bezierCurveTo(0.08,0.97,0.2,0.6,0.16,0.3);s.bezierCurveTo(0.14,0.15,0.08,0.06,0.07,0.04);s.closePath();return new THREE.ShapeGeometry(s,8)})();
 var UPS=[{k:'p',name:'Мотори',txt:'+6% тяги'},{k:'b',name:'Акумулятор',txt:'−10% витрати заряду'},{k:'a',name:'Броня',txt:'+10% міцності, −15% шкоди від ППО'},{k:'w',name:'Боєголовка',txt:'+12% радіус підриву'}];
 var SHOP=(function(){
-  var d={money:400,owned:{free:1,whoop:1},up:{}};
-  try{var j=JSON.parse(localStorage.getItem('fpvm.shop')||'null');if(j&&typeof j==='object'){if(+j.money>=0)d.money=+j.money;d.owned=Object.assign({free:1,whoop:1},j.owned||{});d.up=j.up||{}}}catch(e){}
+  var d={money:400,owned:{free:1,whoop:1},up:{},props:{std:1},eq:{}};
+  try{var j=JSON.parse(localStorage.getItem('fpvm.shop')||'null');if(j&&typeof j==='object'){if(+j.money>=0)d.money=+j.money;d.owned=Object.assign({free:1,whoop:1},j.owned||{});d.up=j.up||{};d.props=Object.assign({std:1},j.props||{});d.eq=j.eq||{}}}catch(e){}
   return d;
 })();
 function saveShop(){try{localStorage.setItem('fpvm.shop',JSON.stringify(SHOP))}catch(e){}}
@@ -277,11 +287,11 @@ function upLv(id,k){var u=SHOP.up[id];return u?(u[k]|0):0}
 var _dk='',_dv=null;
 function D(){
   var base=DRONES[1],i;for(i=0;i<DRONES.length;i++)if(DRONES[i].id===S.drone){base=DRONES[i];break}
-  var id=base.id,key=id+'|'+upLv(id,'p')+upLv(id,'b')+upLv(id,'a')+upLv(id,'w');
+  var id=base.id,pp=propOf(SHOP.eq[id]||'std'),key=id+'|'+upLv(id,'p')+upLv(id,'b')+upLv(id,'a')+upLv(id,'w')+'|'+pp.id;
   if(key===_dk)return _dv;
   var e=Object.assign({},base);
   e.twr=base.twr*(1+0.06*upLv(id,'p'));e.batt=base.batt*(1-0.1*upLv(id,'b'));e.crashV=base.crashV*(1+0.1*upLv(id,'a'));
-  e.armor=1-0.15*upLv(id,'a');e.blast=(base.blast||1)*(1+0.12*upLv(id,'w'));
+  e.twr*=pp.twr;e.batt*=pp.batt;e.crashV*=pp.crash;e.pcol=pp.color;e.armor=1-0.15*upLv(id,'a');e.blast=(base.blast||1)*(1+0.12*upLv(id,'w'));
   _dk=key;_dv=e;return e;
 }
 
@@ -920,7 +930,7 @@ gates.forEach(function(g,i){
 var drone=new THREE.Group(),props=[];
 function buildDrone(df){
   while(drone.children.length)drone.remove(drone.children[0]);props.length=0;
-  var mBody=new THREE.MeshLambertMaterial({color:0x20262e}),mArm=new THREE.MeshLambertMaterial({color:0x111418}),mAcc=new THREE.MeshBasicMaterial({color:df.color});
+  var propMat=new THREE.MeshBasicMaterial({color:df.pcol||'#aab4c0',transparent:true,opacity:0.92,side:THREE.DoubleSide,depthWrite:false});var mBody=new THREE.MeshLambertMaterial({color:0x20262e}),mArm=new THREE.MeshLambertMaterial({color:0x111418}),mAcc=new THREE.MeshBasicMaterial({color:df.color});
   var body=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.04,0.16),mBody);drone.add(body);
   var bat=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.03,0.1),mAcc);bat.position.set(0,0.035,0.01);drone.add(bat);
   var lens=new THREE.Mesh(new THREE.CylinderGeometry(0.015,0.015,0.03,8),new THREE.MeshBasicMaterial({color:0x111111}));
@@ -931,6 +941,7 @@ function buildDrone(df){
     var mo=new THREE.Mesh(new THREE.CylinderGeometry(0.014,0.014,0.025,8),mArm);mo.position.set(s[0]*df.arm,0.012,s[1]*df.arm);drone.add(mo);
     var pr=new THREE.Mesh(new THREE.CircleGeometry(df.prop,20),new THREE.MeshBasicMaterial({color:0xaab4c0,transparent:true,opacity:0.3,side:THREE.DoubleSide,depthWrite:false}));
     pr.rotation.x=-Math.PI/2;pr.position.set(s[0]*df.arm,0.028,s[1]*df.arm);drone.add(pr);props.push(pr);
+    var bl=new THREE.Group();for(var bi=0;bi<3;bi++){var bm=new THREE.Mesh(BLADE_G,propMat);bm.scale.setScalar(df.prop);bm.rotation.z=bi*2.0944;bl.add(bm)}pr.add(bl);
     if(df.duct){var du=new THREE.Mesh(new THREE.TorusGeometry(df.prop+0.006,0.007,6,20),mAcc);du.rotation.x=Math.PI/2;du.position.copy(pr.position);drone.add(du)}
   });
   var LM=function(c){return new THREE.MeshLambertMaterial({color:c})};
@@ -1805,9 +1816,18 @@ function openShop(tab){shopTab=tab||shopTab;$('#shop').hidden=false;shopRender()
 function closeShop(){$('#shop').hidden=true}
 function upCost(id,k){return (upLv(id,k)+1)*250}
 function shopSelect(id){S.drone=id;S.tilt=D().tilt;save();buildDrone(D());renderGarage($('#garageStart'));renderGarage($('#garageMenu'));syncUI()}
+function drawPropIcon(c,col){
+  var x=c.getContext('2d'),R=c.height*0.46;x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,c.width,c.height);x.translate(c.width/2,c.height/2);
+  x.fillStyle=col;x.globalAlpha=0.93;
+  for(var i=0;i<3;i++){
+    x.save();x.rotate(i*2.0944+0.35);x.beginPath();x.moveTo(-0.07*R,-0.04*R);
+    x.bezierCurveTo(-0.2*R,-0.25*R,-0.17*R,-0.7*R,-0.05*R,-R);x.bezierCurveTo(0.08*R,-0.97*R,0.2*R,-0.6*R,0.16*R,-0.3*R);x.bezierCurveTo(0.14*R,-0.15*R,0.08*R,-0.06*R,0.07*R,-0.04*R);x.closePath();x.fill();x.restore();
+  }
+  x.globalAlpha=1;x.fillStyle='rgba(0,0,0,0.35)';x.beginPath();x.arc(0,0,R*0.14,0,6.2832);x.fill();x.fillStyle='rgba(255,255,255,0.55)';x.beginPath();x.arc(0,0,R*0.05,0,6.2832);x.fill();
+}
 function shopRender(){
   var h='<div class="sh-in"><div class="sh-top"><b>МАГАЗИН</b><span class="sh-m">'+SHOP.money+' ₴</span><button class="mini" data-act="close" type="button">Закрити</button></div>'+
-   '<div class="sh-tabs"><button type="button" data-act="tab" data-t="d" class="'+(shopTab==='d'?'on':'')+'">Дрони</button><button type="button" data-act="tab" data-t="u" class="'+(shopTab==='u'?'on':'')+'">Тюнінг</button></div>';
+   '<div class="sh-tabs"><button type="button" data-act="tab" data-t="d" class="'+(shopTab==='d'?'on':'')+'">Дрони</button><button type="button" data-act="tab" data-t="u" class="'+(shopTab==='u'?'on':'')+'">Тюнінг</button><button type="button" data-act="tab" data-t="p" class="'+(shopTab==='p'?'on':'')+'">Гвинти</button></div>';
   if(shopTab==='d'){
     h+='<div class="sh-grid">'+DRONES.map(function(d){
       var own=!!SHOP.owned[d.id],cur=S.drone===d.id,btn;
@@ -1815,6 +1835,15 @@ function shopRender(){
       else if(own)btn='<button class="mini" type="button" data-act="sel" data-id="'+d.id+'">Вибрати</button>';
       else btn='<button class="mini buy" type="button" data-act="buy" data-id="'+d.id+'"'+(SHOP.money<PRICE[d.id]?' disabled':'')+'>Купити · '+PRICE[d.id]+' ₴</button>';
       return '<div class="shc'+(cur?' on':'')+(own?'':' lock')+'"><canvas width="250" height="100"></canvas><b>'+d.name+'</b><small>'+d.info+'</small><div class="st">'+statBars(d.st)+'</div>'+btn+'</div>';
+    }).join('')+'</div>';
+  }else if(shopTab==='p'){
+    var cid=S.drone,eqp=SHOP.eq[cid]||'std',bd=DRONES.filter(function(d){return d.id===cid})[0]||DRONES[1];
+    h+='<p class="sh-note">Гвинти для: <b>'+bd.name+'</b>. Змінюють тягу, витрату заряду й міцність.</p><div class="sh-grid">'+PROPS.map(function(pp){
+      var own=!!SHOP.props[pp.id],btn;
+      if(eqp===pp.id)btn='<button class="mini" type="button" disabled>Встановлено</button>';
+      else if(own)btn='<button class="mini" type="button" data-act="eqp" data-id="'+pp.id+'">Встановити</button>';
+      else btn='<button class="mini buy" type="button" data-act="buyp" data-id="'+pp.id+'"'+(SHOP.money<pp.price?' disabled':'')+'>Купити · '+pp.price+' ₴</button>';
+      return '<div class="shc'+(eqp===pp.id?' on':'')+(own?'':' lock')+'"><canvas class="pc" width="250" height="100" data-c="'+pp.color+'"></canvas><b>'+pp.name+'</b><small>'+pp.txt+'</small>'+btn+'</div>';
     }).join('')+'</div>';
   }else{
     var id=S.drone,base=DRONES.filter(function(d){return d.id===id})[0]||DRONES[1];
@@ -1827,6 +1856,7 @@ function shopRender(){
   h+='<p class="sh-note">Гроші дають лише за виконану місію: 500 ₴ + 80 ₴ за кожен збитий Shahed (у соло ще 40 ₴ за залишений дрон).</p></div>';
   var el=$('#shop');el.innerHTML=h;
   if(shopTab==='d'){var cs=el.querySelectorAll('canvas');DRONES.forEach(function(d,i){drawIcon(cs[i],d)})}
+  if(shopTab==='p'){var pcs=el.querySelectorAll('canvas.pc');for(var pi=0;pi<pcs.length;pi++)drawPropIcon(pcs[pi],pcs[pi].dataset.c)}
   shopBtns();
 }
 (function(){
@@ -1840,6 +1870,11 @@ function shopRender(){
       if(SHOP.owned[id]||SHOP.money<PRICE[id])return;
       SHOP.money-=PRICE[id];SHOP.owned[id]=1;saveShop();shopSelect(id);toast('Куплено · '+PRICE[id]+' ₴','good');shopRender();return;
     }
+    if(a==='buyp'){
+      var pp=propOf(id);if(SHOP.props[id]||SHOP.money<pp.price)return;
+      SHOP.money-=pp.price;SHOP.props[id]=1;SHOP.eq[S.drone]=id;saveShop();buildDrone(D());toast('Гвинти куплено · '+pp.price+' ₴','good');shopRender();return;
+    }
+    if(a==='eqp'){if(SHOP.props[id]){SHOP.eq[S.drone]=id;saveShop();buildDrone(D());shopRender()}return}
     if(a==='sel'){if(SHOP.owned[id]){shopSelect(id);shopRender()}return}
     if(a==='up'){
       var k=b.dataset.k,cur=S.drone,c=upCost(cur,k);
