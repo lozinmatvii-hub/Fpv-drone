@@ -104,6 +104,18 @@ input[type=range]{accent-color:var(--accent)}
 #tbtns button{width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:rgba(10,13,18,.62);color:var(--fg);font:700 11px var(--mono);touch-action:manipulation}
 body.touchui #menuBtn{display:none}
 #tbDet{background:#a3201a!important;border-color:#ff5a3a!important;color:#fff!important}
+#shop{position:fixed;inset:0;z-index:70;background:rgba(6,9,13,.96);overflow:auto;-webkit-overflow-scrolling:touch}
+.sh-in{max-width:980px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 40px max(16px,env(safe-area-inset-left))}
+.sh-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}.sh-top b{font-size:20px;letter-spacing:.12em;flex:1}.sh-m{color:#ffd23a;font-weight:700;font-size:18px}
+.sh-tabs{display:flex;gap:6px;margin-bottom:14px}.sh-tabs button{flex:1;border:1px solid var(--line);background:var(--panel2);color:var(--dim);border-radius:8px;padding:9px}
+.sh-tabs button.on{background:var(--accent);color:var(--accent-fg);font-weight:700;border-color:transparent}
+.sh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.shc{display:flex;flex-direction:column;gap:6px;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);min-width:0}
+.shc.on{border-color:var(--accent)}.shc.lock canvas{opacity:.5}.shc canvas{width:100%;height:auto;aspect-ratio:5/2}.shc b{font-size:15px}.shc small{color:var(--dim);font-size:11.5px;line-height:1.3}
+.shc .mini{margin-top:auto;padding:8px}.mini.buy{background:#ffd23a;color:#14161a;border-color:transparent;font-weight:700}.mini:disabled{opacity:.45}
+.sh-ups{display:grid;gap:10px}.sh-up{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);flex-wrap:wrap}
+.sh-up>div{flex:1;min-width:150px;display:flex;flex-direction:column;gap:2px}.sh-up small{color:var(--dim)}.pips{letter-spacing:.15em;color:#ffd23a}
+.sh-note{color:var(--dim);font-size:12.5px;margin:14px 0 0}.dcard.lock{opacity:.6}.pr{font-style:normal;color:#ffd23a;font-size:12px;margin-left:4px}
 #coop{margin:0 0 14px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel2)}
 .cr{display:flex;gap:8px;align-items:center;min-width:0}
 .cr input,#nm{min-width:0;width:100%;background:#161c25;border:1px solid var(--line);border-radius:8px;padding:6px 8px;text-transform:none}
@@ -122,7 +134,7 @@ body.touchui #menuBtn{display:none}
   <div class="card">
     <h1 class="brand"><b>FPV</b><i>МІСІЯ</i></h1>
     <p class="lead">Веди FPV-дрон над полем: знищуй танки й вантажівки, перехоплюй Shahed, обходь ППО. Літай сам або разом із друзями в онлайн-кімнаті.</p>
-    <div class="sec">Гараж · вибери дрон</div><div class="garage" id="garageStart"></div>
+    <div class="sec">Гараж · вибери дрон <button class="mini" id="shopS" type="button">Магазин</button></div><div class="garage" id="garageStart"></div>
     <div class="quick">
       <div class="row"><label>Режим</label><div class="seg" data-key="net"><button type="button" data-v="solo">Одиночна</button><button type="button" data-v="coop">Онлайн кооператив</button></div></div>
       <div class="row"><label>Час доби</label><div class="seg" data-key="tod"><button type="button" data-v="golden">Захід</button><button type="button" data-v="day">День</button><button type="button" data-v="night">Ніч</button></div></div>
@@ -149,7 +161,7 @@ body.touchui #menuBtn{display:none}
 <div class="overlay" id="menu" hidden>
   <div class="card menu">
     <h2>Налаштування</h2>
-    <h3>Гараж</h3><div class="garage" id="garageMenu"></div>
+    <h3>Гараж <button class="mini" id="shopM" type="button">Магазин</button></h3><div class="garage" id="garageMenu"></div>
     <h3>Гра</h3>
     <div class="row" id="roomRow" hidden><label>Кімната</label><div class="cr"><b id="roomCode" class="val"></b><button class="mini" id="roomReset" type="button">Нова місія</button></div></div>
     <div class="row"><label>Режим</label><div class="seg" data-key="net"><button type="button" data-v="solo">Одиночна</button><button type="button" data-v="coop">Онлайн кооператив</button></div></div>
@@ -161,6 +173,7 @@ body.touchui #menuBtn{display:none}
     <h3>Екран і дотик</h3>
     <div class="row"><label>Екранні стіки</label><div class="seg" data-key="touch"><button type="button" data-v="auto">Авто</button><button type="button" data-v="on">Так</button><button type="button" data-v="off">Ні</button></div></div>
     <div class="row"><label for="tsize">Розмір стіків</label><div><input id="tsize" type="range" min="0.7" max="1.6" step="0.1"><span class="val" id="tsizeV"></span></div></div>
+    <div class="row"><label>Радар</label><div class="seg" data-key="radar"><button type="button" data-v="on">Увімк.</button><button type="button" data-v="off">Вимк.</button></div></div>
     <div class="row"><label>OSD</label><div class="seg" data-key="osd"><button type="button" data-v="on">Увімк.</button><button type="button" data-v="off">Вимк.</button></div></div>
     <div class="row"><label>Пульт на екрані</label><div class="seg" data-key="radio"><button type="button" data-v="gx12">GX12</button><button type="button" data-v="simple">Простий</button><button type="button" data-v="off">Вимк.</button></div></div>
     <div class="row"><label>Повний екран</label><button class="mini" id="fsBtn" type="button">Перемкнути</button></div>
@@ -198,6 +211,7 @@ body.touchui #menuBtn{display:none}
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<div id="shop" hidden></div>
 <script>
 (function(){
 'use strict';
@@ -223,7 +237,7 @@ var PRESETS={
 };
 var DEF={mode:'acro',tilt:25,fov:105,rate:670,yawRate:400,expo:0.35,thrMode:'direct',dead:0.05,view:'fpv',vol:0.5,quality:'high',
   saved:false,map:JSON.parse(JSON.stringify(PRESETS.gp2.map)),btn:{reset:0,view:3,mode:2,menu:9,arm:-1,det:1},preset:'gp2',
-  drone:'free',game:'war',net:'solo',tod:'golden',wind:'0',gate:'normal',osd:'on',touch:'auto',tsize:1,assist:'off',slow:'1',radio:'gx12'};
+  drone:'free',game:'war',net:'solo',tod:'golden',wind:'0',gate:'normal',osd:'on',radar:'on',touch:'auto',tsize:1,assist:'off',slow:'1',radio:'gx12'};
 var S=load();
 function load(){
   var s=JSON.parse(JSON.stringify(DEF));
@@ -251,7 +265,25 @@ var DRONES=[
  {id:'mini',model:'mini',name:'Folding Mini',info:'Білий складний. Легкий і слухняний.',twr:3.6,drag:0.017,lin:0.17,lag:0.05,rate:0.75,batt:0.85,crashV:9,tilt:20,arm:0.09,prop:0.06,duct:false,color:'#ff9a2a',scale:0.85,snd:0.8,st:[3,3,4,3]},
  {id:'duct',model:'duct',name:'Duct Pro 3.5″',info:'Захищені гвинти й камера спереду.',twr:3.8,drag:0.019,lin:0.2,lag:0.045,rate:0.8,batt:0.75,crashV:14,tilt:16,arm:0.11,prop:0.062,duct:true,color:'#e8edf2',scale:1.05,snd:0.85,st:[3,3,5,3]}
 ];
-function D(){for(var i=0;i<DRONES.length;i++)if(DRONES[i].id===S.drone)return DRONES[i];return DRONES[1]}
+var PRICE={free:0,whoop:0,cine:500,race:700,lr:800,mini:900,photo:1000,duct:1200,drag:1500,lr10:1800,strike:2500};
+var UPS=[{k:'p',name:'Мотори',txt:'+6% тяги'},{k:'b',name:'Акумулятор',txt:'−10% витрати заряду'},{k:'a',name:'Броня',txt:'+10% міцності, −15% шкоди від ППО'},{k:'w',name:'Боєголовка',txt:'+12% радіус підриву'}];
+var SHOP=(function(){
+  var d={money:400,owned:{free:1,whoop:1},up:{}};
+  try{var j=JSON.parse(localStorage.getItem('fpvm.shop')||'null');if(j&&typeof j==='object'){if(+j.money>=0)d.money=+j.money;d.owned=Object.assign({free:1,whoop:1},j.owned||{});d.up=j.up||{}}}catch(e){}
+  return d;
+})();
+function saveShop(){try{localStorage.setItem('fpvm.shop',JSON.stringify(SHOP))}catch(e){}}
+function upLv(id,k){var u=SHOP.up[id];return u?(u[k]|0):0}
+var _dk='',_dv=null;
+function D(){
+  var base=DRONES[1],i;for(i=0;i<DRONES.length;i++)if(DRONES[i].id===S.drone){base=DRONES[i];break}
+  var id=base.id,key=id+'|'+upLv(id,'p')+upLv(id,'b')+upLv(id,'a')+upLv(id,'w');
+  if(key===_dk)return _dv;
+  var e=Object.assign({},base);
+  e.twr=base.twr*(1+0.06*upLv(id,'p'));e.batt=base.batt*(1-0.1*upLv(id,'b'));e.crashV=base.crashV*(1+0.1*upLv(id,'a'));
+  e.armor=1-0.15*upLv(id,'a');e.blast=(base.blast||1)*(1+0.12*upLv(id,'w'));
+  _dk=key;_dv=e;return e;
+}
 
 /* ───────── terrain ───────── */
 function hRaw(x,z){
@@ -468,7 +500,7 @@ var cloudMat=new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacit
 })();
 
 // war mode (mission): ground vehicles, anti-air guns, Shahed drones, co-op sync
-var war={lives:8,hp:100,over:false,won:false,msg:'',hitT:-9999,tw:0,beepT:0,tanks:0,trucks:0,aa:0,shot:0,breach:0,lastBreach:0};
+var war={lives:8,hp:100,over:false,won:false,msg:'',hitT:-9999,tw:0,beepT:0,tanks:0,trucks:0,aa:0,shot:0,breach:0,lastBreach:0,paid:false,reward:0};
 var TANKS_N=4,TRUCKS_N=6,AA_N=3,SH_SPEED=34,MAX_LIVES=8;
 var NET={online:false,code:'',id:'',name:'',off:0,t0:-1,seed:1,dead:{},pending:[],peers:{},players:1,err:'',busy:false,resetReq:false,quiet:0,timer:0};
 function coop(){return S.net==='coop'&&NET.online}
@@ -655,7 +687,7 @@ function restoreVeh(){
   wveh.forEach(function(v){v.alive=true;v.orig.forEach(function(o){o[0].material=o[1]});if(v.flame){v.g.remove(v.flame);v.flame=null}});
 }
 function resetWar(){
-  war.lives=MAX_LIVES;war.hp=100;war.over=false;war.won=false;war.msg='';war.lastBreach=0;war.tanks=0;war.trucks=0;war.aa=0;war.shot=0;war.breach=0;
+  war.lives=MAX_LIVES;war.hp=100;war.over=false;war.won=false;war.msg='';war.lastBreach=0;war.paid=false;war.reward=0;war.tanks=0;war.trucks=0;war.aa=0;war.shot=0;war.breach=0;
   restoreVeh();clearWarFx();
   if(coop()){NET.resetReq=true;netTick(true)}
   else{war.tw=0;NET.dead={};NET.pending=[];NET.seed=(Math.random()*1e9)|0;buildSched(NET.seed)}
@@ -675,6 +707,10 @@ function fireTracer(ox,oy,oz,d){
   var n=Math.sqrt(dx*dx+dy*dy+dz*dz);
   t.vx=dx/n*300;t.vy=dy/n*300;t.vz=dz/n*300;t.life=1.6;t.on=true;
   t.m.position.set(ox,oy,oz);t.m.visible=true;t.m.lookAt(ox+t.vx,oy+t.vy,oz+t.vz);
+}
+function payout(){
+  war.paid=true;var r=500+war.shot*80+(coop()?0:Math.max(0,war.lives)*40);
+  war.reward=r;SHOP.money+=r;saveShop();shopBtns();toast('Гроші за місію: +'+r+' ₴','good');
 }
 function warT(){return coop()?(Date.now()+NET.off-NET.t0)/1000:war.tw}
 function warUpdate(dt){
@@ -721,7 +757,7 @@ function warUpdate(dt){
       var u=clamp(((st.p.x-ox)*sx+(st.p.y-oy)*sy+(st.p.z-oz)*sz)/l2,0,1);
       var cx=ox+sx*u-st.p.x,cy=oy+sy*u-st.p.y,cz=oz+sz*u-st.p.z;
       if(cx*cx+cy*cy+cz*cz<1.6){
-        t.on=false;m.visible=false;war.hp-=3;war.hitT=now;beep(120,80,0.06,'square');
+        t.on=false;m.visible=false;war.hp-=3*(D().armor||1);war.hitT=now;beep(120,80,0.06,'square');
         if(war.hp<=0){war.hp=0;crash('Збито ППО',true)}
       }
     }
@@ -769,6 +805,7 @@ function warUpdate(dt){
     if(war.tanks>=TANKS_N&&war.trucks>=TRUCKS_N){war.over=true;war.won=true;war.msg='';toast('Місію виконано','good');beep(660,990,0.35,'triangle')}
     else if(war.breach>=5){war.over=true;war.won=false;war.msg='Занадто багато проривів'}
   }
+  if(war.over&&war.won&&!war.paid)payout();
   fxUpdate(dt);
 }
 
@@ -812,7 +849,7 @@ function applyNet(j){
   NET.off=j.now-Date.now();
   if(j.t0!==NET.t0){
     var first=NET.t0<0;
-    NET.t0=j.t0;NET.dead={};restoreVeh();clearWarFx();war.over=false;war.won=false;war.msg='';war.lastBreach=0;war.hp=100;
+    NET.t0=j.t0;NET.dead={};restoreVeh();clearWarFx();war.over=false;war.won=false;war.msg='';war.lastBreach=0;war.paid=false;war.reward=0;war.hp=100;
     if(first)NET.quiet=performance.now()+2500;
   }
   if(j.seed!==NET.seed){NET.seed=j.seed;buildSched(j.seed)}
@@ -855,7 +892,7 @@ function netLeave(){
   if(NET.online){try{navigator.sendBeacon('/api/room',new Blob([JSON.stringify({code:NET.code,id:NET.id,leave:true})],{type:'application/json'}))}catch(e){}}
   clearInterval(NET.timer);NET.online=false;NET.peers={};NET.dead={};NET.pending=[];NET.t0=-1;
   restoreVeh();clearWarFx();
-  war.tw=0;war.over=false;war.won=false;war.msg='';war.lastBreach=0;war.lives=MAX_LIVES;war.hp=100;
+  war.tw=0;war.over=false;war.won=false;war.msg='';war.lastBreach=0;war.paid=false;war.reward=0;war.lives=MAX_LIVES;war.hp=100;
   NET.seed=(Math.random()*1e9)|0;buildSched(NET.seed);
 }
 window.addEventListener('pagehide',function(){if(NET.online){try{navigator.sendBeacon('/api/room',new Blob([JSON.stringify({code:NET.code,id:NET.id,leave:true})],{type:'application/json'}))}catch(e){}}});
@@ -1452,6 +1489,55 @@ function drawMark(p,label,color,U,fs){
     hx.fillText(label+' '+Math.round(dist)+'м',px-Math.cos(an)*38*U,py-Math.sin(an)*30*U);
   }
 }
+var radV=new THREE.Vector3();
+function drawRadar(U,fs,mx,my,now){
+  var R=Math.max(46,Math.min(78*U,HH*0.17)),cx=W-mx-R-6*U,cy=HH-my-R-fs*1.7,RM=320,i,d;
+  radV.set(0,0,-1).applyQuaternion(st.q);
+  var hd=Math.atan2(-radV.x,-radV.z),ch=Math.cos(hd),sh=Math.sin(hd);
+  function pt(x,z,clamp){
+    var dx=x-st.p.x,dz=z-st.p.z,sx=dx*ch-dz*sh,su=-dx*sh-dz*ch,l=Math.sqrt(sx*sx+su*su),k=R/RM;
+    if(l>RM){if(!clamp)return null;sx*=RM/l;su*=RM/l}
+    return [cx+sx*k,cy-su*k,l>RM];
+  }
+  hx.save();
+  hx.beginPath();hx.arc(cx,cy,R,0,6.2832);hx.fillStyle='rgba(2,20,8,0.62)';hx.fill();
+  hx.lineWidth=1.5*U;hx.strokeStyle='rgba(70,255,130,0.85)';hx.stroke();
+  hx.save();hx.beginPath();hx.arc(cx,cy,R,0,6.2832);hx.clip();
+  hx.lineWidth=1;hx.strokeStyle='rgba(70,255,130,0.25)';
+  hx.beginPath();hx.arc(cx,cy,R/3,0,6.2832);hx.moveTo(cx+R*2/3,cy);hx.arc(cx,cy,R*2/3,0,6.2832);
+  hx.moveTo(cx-R,cy);hx.lineTo(cx+R,cy);hx.moveTo(cx,cy-R);hx.lineTo(cx,cy+R);hx.stroke();
+  var sa=(now/1600)%6.2832;
+  hx.strokeStyle='rgba(120,255,160,0.7)';hx.lineWidth=1.5;hx.beginPath();hx.moveTo(cx,cy);hx.lineTo(cx+Math.cos(sa)*R,cy+Math.sin(sa)*R);hx.stroke();
+  // AA danger zones and units
+  for(i=0;i<wveh.length;i++){
+    var v=wveh[i];if(!v.alive)continue;
+    var p=v.g.position,q=pt(p.x,p.z,false);if(!q)continue;
+    if(v.type==='aa'){
+      hx.strokeStyle='rgba(120,255,160,0.55)';hx.setLineDash([3,3]);hx.lineWidth=1;hx.beginPath();hx.arc(q[0],q[1],90*R/RM,0,6.2832);hx.stroke();hx.setLineDash([]);
+      hx.fillStyle='#b8ffc9';hx.beginPath();hx.moveTo(q[0],q[1]-4*U);hx.lineTo(q[0]+3.5*U,q[1]+3*U);hx.lineTo(q[0]-3.5*U,q[1]+3*U);hx.closePath();hx.fill();
+    }else{
+      hx.fillStyle='#3dff7a';var s=(v.type==='tank'?3.2:2.4)*U;hx.fillRect(q[0]-s,q[1]-s,s*2,s*2);
+    }
+  }
+  for(var id in NET.peers){var gh=ghosts[id];if(!gh||!gh.visible)continue;var g2=pt(gh.position.x,gh.position.z,true);hx.strokeStyle='#3dff7a';hx.lineWidth=1.5*U;hx.beginPath();hx.arc(g2[0],g2[1],3.2*U,0,6.2832);hx.stroke()}
+  var blink=(Math.floor(now/250)%2)===0;
+  for(i=0;i<shLive.length;i++){
+    var m=shLive[i],s2=pt(m.position.x,m.position.z,true);
+    hx.fillStyle=blink?'#e8fff0':'#3dff7a';hx.beginPath();hx.arc(s2[0],s2[1],(s2[2]?2.4:3.4)*U,0,6.2832);hx.fill();
+  }
+  hx.restore();
+  // own drone
+  hx.fillStyle='#caffd8';hx.beginPath();hx.moveTo(cx,cy-5.5*U);hx.lineTo(cx+4*U,cy+4*U);hx.lineTo(cx,cy+2*U);hx.lineTo(cx-4*U,cy+4*U);hx.closePath();hx.fill();
+  // north marker
+  var nx=cx+(-(-1)*sh)*0,ny=0;
+  var nsx=(0*ch-(-1)*sh),nsu=(-0*sh-(-1)*ch);
+  hx.fillStyle='rgba(150,255,185,0.95)';hx.font='700 '+Math.round(fs*0.7)+'px JetBrains Mono,monospace';hx.textAlign='center';hx.textBaseline='middle';
+  hx.fillText('N',cx+nsx*(R-7*U),cy-nsu*(R-7*U));
+  hx.textBaseline='alphabetic';
+  hx.fillStyle='rgba(120,255,160,0.8)';hx.font='600 '+Math.round(fs*0.62)+'px JetBrains Mono,monospace';
+  hx.fillText('РАДАР '+RM+'м',cx,cy+R+fs*0.9);
+  hx.restore();
+}
 function drawWarHud(U,fs,mx,my,now){
   hx.save();hx.textAlign='center';hx.font='600 '+fs+'px JetBrains Mono,monospace';hx.fillStyle='#f3f7fb';
   var y=my+fs*2.6,i,d;
@@ -1480,8 +1566,9 @@ function drawWarHud(U,fs,mx,my,now){
     hx.font='700 '+Math.round(fs*2.2)+'px Chakra Petch,sans-serif';hx.fillStyle=war.won?'#62f0a0':'#ff5a5a';
     hx.fillText(war.won?'МІСІЮ ВИКОНАНО':'МІСІЮ ПРОВАЛЕНО',W/2,HH*0.62);
     hx.font='600 '+Math.round(fs*1.05)+'px JetBrains Mono,monospace';hx.fillStyle='#f3f7fb';
-    hx.fillText((war.msg?war.msg+' · ':'')+'R — нова місія'+(coop()?' (для всіх)':''),W/2,HH*0.62+fs*2.4);
+    hx.fillText((war.won&&war.reward?'+'+war.reward+' ₴ · ':'')+(war.msg?war.msg+' · ':'')+'R — нова місія'+(coop()?' (для всіх)':''),W/2,HH*0.62+fs*2.4);
   }
+  if(S.radar!=='off')drawRadar(U,fs,mx,my,now);
   hx.restore();
 }
 function drawGX12(U){
@@ -1573,7 +1660,7 @@ function toggleMenu(){
   if(!m.hidden){syncUI();refreshPadUI();buildChRows();buildBtnRows()}
 }
 function startFlight(){
-  if(started)return;if(S.net==='coop'&&!NET.online){toast('Спочатку створи кімнату або увійди за кодом','bad');return}started=true;paused=false;$('#start').hidden=true;initAudio();respawn();applyTouchUI();
+  if(started||!$('#shop').hidden)return;if(S.net==='coop'&&!NET.online){toast('Спочатку створи кімнату або увійди за кодом','bad');return}started=true;paused=false;$('#start').hidden=true;initAudio();respawn();applyTouchUI();
   if(touchOn()&&window.innerHeight>window.innerWidth)toast('Поверни телефон горизонтально');
 }
 $('#goBtn').addEventListener('click',startFlight);
@@ -1677,13 +1764,14 @@ function drawIcon(c,d){
   var bl=(d.model==='strike'||d.model==='lr10')?0.36:0.24;x.fillStyle=d.color;x.fillRect(-h*0.07*d.scale,-h*bl/2*d.scale,h*0.14*d.scale,h*bl*d.scale);
 }
 function renderGarage(el){
-  el.innerHTML=DRONES.map(function(d){return '<button type="button" class="dcard'+(d.id===S.drone?' on':'')+'" data-id="'+d.id+'"><canvas width="250" height="100"></canvas><b>'+d.name+'</b><small>'+d.info+'</small><div class="st">'+statBars(d.st)+'</div></button>'}).join('');
+  el.innerHTML=DRONES.map(function(d){return '<button type="button" class="dcard'+(d.id===S.drone?' on':'')+(SHOP.owned[d.id]?'':' lock')+'" data-id="'+d.id+'"><canvas width="250" height="100"></canvas><b>'+d.name+(SHOP.owned[d.id]?'':' <em class="pr">'+PRICE[d.id]+' ₴</em>')+'</b><small>'+d.info+'</small><div class="st">'+statBars(d.st)+'</div></button>'}).join('');
   var cs=el.querySelectorAll('canvas');DRONES.forEach(function(d,i){drawIcon(cs[i],d)});
 }
 document.addEventListener('click',function(e){
   var c=e.target.closest('.dcard');
   if(c){
     if(S.drone===c.dataset.id)return;
+    if(!SHOP.owned[c.dataset.id]){openShop('d');return}
     S.drone=c.dataset.id;S.tilt=D().tilt;save();buildDrone(D());
     renderGarage($('#garageStart'));renderGarage($('#garageMenu'));syncUI();
     if(started){respawn();toast(D().name)}
@@ -1709,6 +1797,66 @@ $('#fsBtn').addEventListener('click',function(){
     else document.documentElement.requestFullscreen().catch(function(){toast('Повний екран тут недоступний','bad')});
   }catch(e){toast('Повний екран тут недоступний','bad')}
 });
+
+/* ───────── shop ───────── */
+var shopTab='d';
+function shopBtns(){var t='Магазин · '+SHOP.money+' ₴';['#shopS','#shopM'].forEach(function(s){var e=$(s);if(e)e.textContent=t})}
+function openShop(tab){shopTab=tab||shopTab;$('#shop').hidden=false;shopRender()}
+function closeShop(){$('#shop').hidden=true}
+function upCost(id,k){return (upLv(id,k)+1)*250}
+function shopSelect(id){S.drone=id;S.tilt=D().tilt;save();buildDrone(D());renderGarage($('#garageStart'));renderGarage($('#garageMenu'));syncUI()}
+function shopRender(){
+  var h='<div class="sh-in"><div class="sh-top"><b>МАГАЗИН</b><span class="sh-m">'+SHOP.money+' ₴</span><button class="mini" data-act="close" type="button">Закрити</button></div>'+
+   '<div class="sh-tabs"><button type="button" data-act="tab" data-t="d" class="'+(shopTab==='d'?'on':'')+'">Дрони</button><button type="button" data-act="tab" data-t="u" class="'+(shopTab==='u'?'on':'')+'">Тюнінг</button></div>';
+  if(shopTab==='d'){
+    h+='<div class="sh-grid">'+DRONES.map(function(d){
+      var own=!!SHOP.owned[d.id],cur=S.drone===d.id,btn;
+      if(cur)btn='<button class="mini" type="button" disabled>Обрано</button>';
+      else if(own)btn='<button class="mini" type="button" data-act="sel" data-id="'+d.id+'">Вибрати</button>';
+      else btn='<button class="mini buy" type="button" data-act="buy" data-id="'+d.id+'"'+(SHOP.money<PRICE[d.id]?' disabled':'')+'>Купити · '+PRICE[d.id]+' ₴</button>';
+      return '<div class="shc'+(cur?' on':'')+(own?'':' lock')+'"><canvas width="250" height="100"></canvas><b>'+d.name+'</b><small>'+d.info+'</small><div class="st">'+statBars(d.st)+'</div>'+btn+'</div>';
+    }).join('')+'</div>';
+  }else{
+    var id=S.drone,base=DRONES.filter(function(d){return d.id===id})[0]||DRONES[1];
+    h+='<p class="sh-note">Тюнінг для: <b>'+base.name+'</b>. Щоб покращити інший дрон, обери його у вкладці «Дрони».</p><div class="sh-ups">'+UPS.map(function(u){
+      var lv=upLv(id,u.k),c=upCost(id,u.k);
+      return '<div class="sh-up"><div><b>'+u.name+'</b><small>'+u.txt+' за рівень</small></div><span class="pips">'+'●'.repeat(lv)+'○'.repeat(3-lv)+'</span>'+
+        (lv>=3?'<button class="mini" type="button" disabled>МАКС</button>':'<button class="mini buy" type="button" data-act="up" data-k="'+u.k+'"'+(SHOP.money<c?' disabled':'')+'>Покращити · '+c+' ₴</button>')+'</div>';
+    }).join('')+'</div>';
+  }
+  h+='<p class="sh-note">Гроші дають лише за виконану місію: 500 ₴ + 80 ₴ за кожен збитий Shahed (у соло ще 40 ₴ за залишений дрон).</p></div>';
+  var el=$('#shop');el.innerHTML=h;
+  if(shopTab==='d'){var cs=el.querySelectorAll('canvas');DRONES.forEach(function(d,i){drawIcon(cs[i],d)})}
+  shopBtns();
+}
+(function(){
+  var el=$('#shop');
+  el.addEventListener('click',function(e){
+    var b=e.target.closest('[data-act]');if(!b||b.disabled)return;
+    var a=b.dataset.act,id=b.dataset.id;
+    if(a==='close'){closeShop();return}
+    if(a==='tab'){shopTab=b.dataset.t;shopRender();return}
+    if(a==='buy'){
+      if(SHOP.owned[id]||SHOP.money<PRICE[id])return;
+      SHOP.money-=PRICE[id];SHOP.owned[id]=1;saveShop();shopSelect(id);toast('Куплено · '+PRICE[id]+' ₴','good');shopRender();return;
+    }
+    if(a==='sel'){if(SHOP.owned[id]){shopSelect(id);shopRender()}return}
+    if(a==='up'){
+      var k=b.dataset.k,cur=S.drone,c=upCost(cur,k);
+      if(upLv(cur,k)>=3||SHOP.money<c)return;
+      SHOP.money-=c;SHOP.up[cur]=SHOP.up[cur]||{};SHOP.up[cur][k]=upLv(cur,k)+1;saveShop();toast('Покращено','good');shopRender();
+    }
+  });
+  window.addEventListener('keydown',function(e){
+    if(el.hidden)return;
+    if(e.code==='Escape')closeShop();
+    e.stopPropagation();e.preventDefault();
+  },true);
+  var s1=$('#shopS'),s2=$('#shopM');
+  if(s1)s1.addEventListener('click',function(){openShop('d')});
+  if(s2)s2.addEventListener('click',function(){openShop('d')});
+  shopBtns();
+})();
 
 /* ───────── online co-op UI ───────── */
 function netUI(){
@@ -1757,7 +1905,7 @@ function frame(now){
   drawHud(now);
   if(!started&&now-menuTick>700){menuTick=now;refreshPadUI()}
 }
-S.game='war';S.net='solo';if(S.btn.det==null)S.btn.det=1;if(S.radio==='on')S.radio='gx12';syncUI();applySize();applyTOD();updateGateSize();respawn();setGameMode();setupTouch();
+S.game='war';S.net='solo';if(S.btn.det==null)S.btn.det=1;if(!SHOP.owned[S.drone])S.drone='free';if(S.radio==='on')S.radio='gx12';syncUI();applySize();applyTOD();updateGateSize();respawn();setGameMode();setupTouch();
 renderGarage($('#garageStart'));renderGarage($('#garageMenu'));refreshPadUI();buildChRows();buildBtnRows();
 requestAnimationFrame(frame);
 })();
